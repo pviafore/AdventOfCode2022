@@ -18,11 +18,22 @@ namespace input {
         std::ifstream in(filename);
         while (in.good()){
             T element;
-            in >> element;
-            if(in.good()){
-                lines.push_back(element);
+            if constexpr (std::is_same<T, std::string>()){
+                getline(in, element);
             }
+            else {
+                in >> element;
+            }
+            lines.push_back(element);
         }
         return lines;
+    }
+
+    std::string readSingleLine(const std::string& filename) {
+        std::ifstream in(filename);
+        std::string text;
+        getline(in, text);
+        return text;
+
     }
 } // namespace input
