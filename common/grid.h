@@ -19,9 +19,9 @@ namespace Grid {
     class Grid{
     public:
 
-        Grid(std::function<T(char)> mapper) : mapper(mapper) {}
+        explicit Grid(std::function<T(char)> mapper) : mapper(mapper) {}
 
-        using ConstIterator = std::map<Coord,T>::const_iterator;
+        using ConstIterator = typename std::map<Coord,T>::const_iterator;
         // the type of T should be able to take a char
         friend std::istream& operator>>(std::istream& stream, Grid &grid){
             int rowIndex = 0;

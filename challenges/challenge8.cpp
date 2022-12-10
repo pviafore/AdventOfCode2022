@@ -20,7 +20,7 @@ enum class Direction{
 
 size_t getNumberOfTreesVisible(const auto& grid){
 
-    std::map<std::pair<Direction, int>, Grid::Coord> lineOfSightToTreeMapping;
+    const std::map<std::pair<Direction, int>, Grid::Coord> lineOfSightToTreeMapping;
     std::set<Grid::Coord> visible;
     for( const auto& [coord, tree]: grid){
         auto [xPos, yPos] = coord;
