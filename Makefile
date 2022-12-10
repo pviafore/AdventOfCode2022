@@ -7,7 +7,7 @@ run: static-analysis
 		/bin/bash -c "echo ""; time ./test"
 
 static-analysis: build
-		$(DOCKER) cppcheck --std=c++20 $(CPPFILES) --enable=all -q -Icommon --error-exitcode=1  --suppress="missingIncludeSystem" && \
+		$(DOCKER) cppcheck --std=c++20 challenges/challenge$(CHALLENGE).cpp --enable=all -q -Icommon --error-exitcode=1  --suppress="missingIncludeSystem"
 
 build:
 		$(DOCKER) g++ -g challenges/challenge$(CHALLENGE).cpp -Icommon -std=c++23 -o test -Werror -Wall -Wextra -pedantic -fmodules-ts

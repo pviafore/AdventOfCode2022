@@ -1,14 +1,50 @@
+#include <cassert>
 #include <functional>
 #include <istream>
+#include <ostream>
 #include <map>
 #include <utility>
 
 namespace Grid {
+
+
+    enum class Direction {
+        Up,
+        Left,
+        Down,
+        Right
+    };
+
     struct Coord {
         int xPos; 
         int yPos;
 
         std::strong_ordering operator<=>(const Coord& c2) const = default;
+
+        friend Coord operator+(const Coord& lhs, const Coord& rhs){
+            return {lhs.xPos + rhs.xPos, lhs.yPos + rhs.yPos};
+        }
+
+        friend Coord operator-(const Coord&lhs, const Coord& rhs){
+            return lhs + Coord{-1*rhs.xPos, -1*rhs.yPos};
+        }
+
+        friend Coord operator+(const Coord& lhs, Direction direction){
+            switch(direction){
+                case Direction::Up: { return lhs + Coord{0,-1}; }
+                case Direction::Down: { return lhs + Coord{0,1}; }
+                case Direction::Left: { return lhs + Coord{-1,0}; }
+                case Direction::Right: { return lhs + Coord{1,0}; }
+            }
+            assert(false);
+            return {0,0};
+        }
+
+        friend std::ostream& operator<<(std::ostream& stream, const Coord& coord) {
+            stream << "Coord{x=" << coord.xPos << ", y=" << coord.yPos << "}";
+            return stream;
+        }
+
     };
 
     unsigned int getManhattanDistance(const Coord& coord1, const Coord& coord2){
