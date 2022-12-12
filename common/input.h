@@ -1,6 +1,7 @@
 #include <concepts>
 #include <fstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 template<typename T>
@@ -35,5 +36,20 @@ namespace input {
         getline(in, text);
         return text;
 
+    }
+
+    std::vector<std::string> split(const std::string& text, const std::string& delimiter) {
+        std::vector<std::string> out;
+        std::string::size_type pos;
+        std::string::size_type start;
+        for(start=0, pos = text.find(delimiter); pos != std::string::npos; start=pos+delimiter.length(), pos = text.find(delimiter, pos+delimiter.length())){
+            if(start != pos){
+                out.emplace_back(text.substr(start, pos));
+            }
+        }
+        if (start != pos){
+            out.emplace_back(text.substr(start, pos));
+        }
+        return out;
     }
 } // namespace input
