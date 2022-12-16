@@ -1,8 +1,11 @@
+#include <algorithm>
 #include <cassert>
 #include <functional>
 #include <istream>
 #include <ostream>
 #include <map>
+#include <optional>
+#include <ranges>
 #include <utility>
 
 namespace Grid {
@@ -51,6 +54,23 @@ namespace Grid {
         return abs(coord1.xPos - coord2.xPos) + abs(coord1.yPos - coord2.yPos);
     }
 
+    // inclusive
+    std::vector<Coord> getPointsBetween(const Coord& coord1, const Coord& coord2){
+        assert(coord1.xPos == coord2.xPos || coord1.yPos == coord2.yPos); // horizontal or vertical only
+        std::vector<Coord> out;
+        if(coord1.xPos == coord2.xPos){
+            for(int yPos = std::min(coord1.yPos, coord2.yPos); yPos <= std::max(coord1.yPos, coord2.yPos); ++yPos){
+                out.emplace_back(coord1.xPos, yPos);
+            };
+        }
+        else {
+            for(int xPos = std::min(coord1.xPos, coord2.xPos); xPos <= std::max(coord1.xPos, coord2.xPos); ++xPos){
+                out.emplace_back(xPos, coord1.yPos);
+            };
+        }
+        return out;
+    }
+
     template <typename T>
     class Grid{
     public:
@@ -82,6 +102,10 @@ namespace Grid {
             return grid.at(coord);
         }
 
+        T& operator[](Coord coord) {
+            return grid[coord];
+        }
+
         ConstIterator begin() const {
             return grid.begin();
         }
@@ -95,6 +119,21 @@ namespace Grid {
         
         int getMaxX() const {
             return maxX;
+        }
+
+        std::optional<Coord> find(T value) const {
+            auto match = std::ranges::find_if(grid, [value](const auto& coordValuePair){
+                return coordValuePair.second == value;
+            });
+            return (match != grid.end()) ? match->first : std::optional<Coord>{};
+        }
+
+        std::vector<Coord> getNeighbors(Coord coord) const {
+            auto neighborPoints = {coord + Coord{1,0}, coord+Coord{0,1}, coord+Coord{0,-1}, coord+Coord{-1,0}};
+            auto neighborsInGrid = neighborPoints | std::views::filter([this](const Coord& c) {
+                return this->grid.find(c) != this->grid.end();
+            });
+            return {neighborsInGrid.begin(), neighborsInGrid.end()};
         }
 
     private:
