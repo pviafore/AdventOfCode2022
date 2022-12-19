@@ -19,8 +19,8 @@ namespace Grid {
     };
 
     struct Coord {
-        int xPos; 
-        int yPos;
+        int xPos = 0; 
+        int yPos = 0;
 
         std::strong_ordering operator<=>(const Coord& c2) const = default;
 
