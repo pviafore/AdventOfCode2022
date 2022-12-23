@@ -44,11 +44,11 @@ namespace input {
         std::string::size_type start;
         for(start=0, pos = text.find(delimiter); pos != std::string::npos; start=pos+delimiter.length(), pos = text.find(delimiter, pos+delimiter.length())){
             if(start != pos){
-                out.emplace_back(text.substr(start, pos));
+                out.emplace_back(text.substr(start, pos-start));
             }
         }
         if (start != pos){
-            out.emplace_back(text.substr(start, pos));
+            out.emplace_back(text.substr(start));
         }
         return out;
     }
