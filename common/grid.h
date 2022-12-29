@@ -18,6 +18,29 @@ namespace Grid {
         Right
     };
 
+    Direction turn(Direction facing, Direction toTurn){
+        if(toTurn == Direction::Left){
+            switch(facing){
+                case Direction::Up: return Direction::Left;
+                case Direction::Left: return Direction::Down;
+                case Direction::Down: return Direction::Right;
+                case Direction::Right: return Direction::Up;
+                default: assert(false); return Direction::Up;
+            }
+        }
+        else {
+            assert(toTurn == Direction::Right);
+            switch(facing){
+                case Direction::Up: return Direction::Right;
+                case Direction::Right: return Direction::Down;
+                case Direction::Down: return Direction::Left;
+                case Direction::Left: return Direction::Up;
+                default: assert(false); return Direction::Up;
+            }
+        }
+
+    }
+
     struct Coord {
         int xPos = 0; 
         int yPos = 0;
@@ -74,7 +97,7 @@ namespace Grid {
     template <typename T>
     class Grid{
     public:
-
+        explicit Grid() : mapper(std::identity{}) {}
         explicit Grid(std::function<T(char)> mapper) : mapper(mapper) {}
 
         using ConstIterator = typename std::map<Coord,T>::const_iterator;
@@ -89,12 +112,12 @@ namespace Grid {
                 }
                 int columnIndex = 0;
                 for(auto symbol: text) {
-                    grid.grid[{rowIndex, columnIndex++}] = grid.mapper(symbol);
+                    grid.grid[{columnIndex++, rowIndex}] = grid.mapper(symbol);
                 }
                 rowIndex += 1;
-                grid.maxY = columnIndex-1;
+                grid.maxX = columnIndex-1;
             }
-            grid.maxX = rowIndex-1;
+            grid.maxY = rowIndex-1;
             return stream;
         }
 
@@ -113,6 +136,10 @@ namespace Grid {
             return grid.end();
         }
 
+        size_t size() const { 
+            return grid.size();
+        }
+
         int getMaxY() const {
             return maxY;
         }
@@ -121,11 +148,29 @@ namespace Grid {
             return maxX;
         }
 
+        int getMaxXInRow(long row) const { 
+            return std::ranges::max(grid 
+                | std::views::keys 
+                | std::views::filter([row](const auto& c){ return c.yPos == row; }) 
+                | std::views::transform([](const auto& c) { return c.xPos;}));
+        }
+
+        int getMaxYInColumn(long column) const { 
+            return std::ranges::max(grid 
+                | std::views::keys 
+                | std::views::filter([column](const auto& c){ return c.xPos == column; }) 
+                | std::views::transform([](const auto& c) { return c.yPos;}));
+        }
+
         std::optional<Coord> find(T value) const {
             auto match = std::ranges::find_if(grid, [value](const auto& coordValuePair){
                 return coordValuePair.second == value;
             });
             return (match != grid.end()) ? match->first : std::optional<Coord>{};
+        }
+
+        ConstIterator find(Coord coord) const {
+            return grid.find(coord);
         }
 
         std::vector<Coord> getNeighbors(Coord coord) const {
@@ -142,4 +187,4 @@ namespace Grid {
         int maxX = 0;
         int maxY = 0;
     };
-} // namespace grid
+}// namespace grid

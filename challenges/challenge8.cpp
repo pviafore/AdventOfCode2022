@@ -18,9 +18,9 @@ enum class Direction{
     Right
 };
 
-size_t getNumberOfTreesVisible(const auto& grid){
+size_t getNumberOfTreesVisible(auto& grid){
 
-    const std::map<std::pair<Direction, int>, Grid::Coord> lineOfSightToTreeMapping;
+    std::map<std::pair<Direction, int>, Grid::Coord> lineOfSightToTreeMapping;
     std::set<Grid::Coord> visible;
     for( const auto& [coord, tree]: grid){
         auto [xPos, yPos] = coord;
@@ -76,7 +76,7 @@ size_t getNumberOfTreesVisible(const auto& grid){
     return visible.size();
 }
 
-unsigned int getScoreForMostScenicTree(const auto& grid){
+unsigned int getScoreForMostScenicTree(auto& grid){
     std::map<std::pair<Direction, Grid::Coord>, Grid::Coord> lineOfSightPerTree;
     auto getFurthestTree = [&grid, &lineOfSightPerTree](std::byte tree, Direction direction, Grid::Coord pos){
 
