@@ -30,7 +30,6 @@ private:
 	unsigned int totalCalories = 0U;
 };
 
-#include <numeric>
 int main() {
 	auto elves = input::readLines<Elf>("input/input1.txt");
 
